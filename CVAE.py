@@ -130,7 +130,7 @@ class CVAE(tf.keras.Model):
     def call(self, inputs, labels, weight = 1.0):
         
         code_distr = self.encoder(inputs, labels);
-        kl_loss = tfp.layers.KLDivergenceAddLoss(self.prior, weight = 1.0)(code_distr);
+        kl_loss = tfp.layers.KLDivergenceRegularizer(self.prior, weight = 1.0)(code_distr);
         code = code_distr.sample();
         sample_distr = self.decoder(code, labels);
         likelihood_loss = -sample_distr.log_prob(inputs);
