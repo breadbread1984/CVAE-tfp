@@ -26,8 +26,12 @@ class ConditionalInstanceNormalization(tf.keras.layers.Layer):
         mean, variance = tf.nn.moments(inputs, axes = (1,2), keepdims = True);
         gamma = tf.gather(self.gamma, labels);
         beta = tf.gather(self.beta, labels);
-        gamma = tf.expand_dims(tf.expand_dims(gamma,0),0);
-        beta = tf.expand_dims(tf.expand_dims(beta,0),0);
+        # add batch dim when batch size equals 1
+        if gamma.shape.ndims == 1: gamma = tf.expand_dims(gamma,0);
+        if beta.shape.ndims == 1: beta = tf.expand_dims(beta,0);
+        # add two dims to match the batch normal's requirements
+        gamma = tf.expand_dims(tf.expand_dims(gamma,1),1);
+        beta = tf.expand_dims(tf.expand_dims(beta,1),1);
         variance_epsilon = 1e-5;
         outputs = tf.nn.batch_normalization(inputs,mean,variance,beta,gamma,variance_epsilon);
         outputs.set_shape(inputs.get_shape());

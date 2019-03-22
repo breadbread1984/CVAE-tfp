@@ -5,7 +5,7 @@ import tensorflow as tf;
 import tensorflow_probability as tfp;
 from CVAE import CVAE;
 
-batch_size = 1;
+batch_size = 100;
 
 def parse_function(serialized_example):
     feature = tf.io.parse_single_example(
