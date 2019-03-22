@@ -5,6 +5,8 @@ import tensorflow as tf;
 import tensorflow_probability as tfp;
 from CVAE import CVAE;
 
+batch_size = 1;
+
 def parse_function(serialized_example):
     feature = tf.io.parse_single_example(
         serialized_example,
@@ -24,8 +26,8 @@ def main():
     cvae = CVAE(class_num = 10);
     optimizer = tf.keras.optimizers.Adam(1e-4);
     #load dataset
-    trainset = tf.data.TFRecordDataset(os.path.join('dataset','trainset.tfrecord')).map(parse_function).shuffle(100).batch(100);
-    testset = tf.data.TFRecordDataset(os.path.join('dataset','testset.tfrecord')).map(parse_function).batch(100);
+    trainset = tf.data.TFRecordDataset(os.path.join('dataset','trainset.tfrecord')).map(parse_function).shuffle(batch_size).batch(batch_size);
+    testset = tf.data.TFRecordDataset(os.path.join('dataset','testset.tfrecord')).map(parse_function).batch(batch_size);
     #restore from existing checkpoint
     if False == os.path.exists('checkpoints'): os.mkdir('checkpoints');
     checkpoint = tf.train.Checkpoint(model = cvae, optimizer = optimizer, optimizer_step = optimizer.iterations);
@@ -45,7 +47,7 @@ def main():
                 with log.as_default():
                     tf.summary.scalar('loss',avg_loss.result(), step = optimizer.iterations);
                     for i in range(10):
-                        tf.summary.image('sample',cvae.sample(label = i), step = optimizer.iterations);
+                        tf.summary.image('sample',cvae.sample(labels = i), step = optimizer.iterations);
                 print('Step #%d Loss: %.6f' % (optimizer.iterations, avg_loss.result()));
                 avg_loss.reset_states();
             grads = tape.gradient(loss, cvae.trainable_variables);

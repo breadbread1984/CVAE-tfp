@@ -12,6 +12,7 @@ class Encoder(tf.keras.Model):
         super(Encoder,self).__init__();
         
         self.class_num = class_num;
+        self.prior = tfp.distributions.Independent(tfp.distributions.Normal(loc = tf.zeros(encode_size), scale = 1));
         
         self.normalize = tf.keras.layers.Lambda(lambda x: tf.cast(x,tf.float32) - 0.5);
         self.conv1 = tf.keras.layers.Conv2D(filters = base_depth, kernel_size = (5,5), strides = (1,1), padding = 'same');
@@ -31,7 +32,7 @@ class Encoder(tf.keras.Model):
         self.relu5 = tf.keras.layers.LeakyReLU();
         self.flatten = tf.keras.layers.Flatten();
         self.dense = tf.keras.layers.Dense(units = tfp.layers.MultivariateNormalTriL.params_size(encode_size));
-        self.gaussian = tfp.layers.MultivariateNormalTriL(encode_size);
+        self.gaussian = tfp.layers.MultivariateNormalTriL(encode_size, activity_regularizer = tfp.layers.KLDivergenceRegularizer(self.prior, weight=1.0));
         
     def call(self, inputs, labels):
         
@@ -122,20 +123,19 @@ class CVAE(tf.keras.Model):
         super(CVAE, self).__init__();
         
         self.class_num = class_num;
+        self.prior = tfp.distributions.Independent(tfp.distributions.Normal(loc = tf.zeros(encode_size), scale = 1));
         
         self.encoder = Encoder(encode_size, class_num, base_depth);
         self.decoder = Decoder(input_shape, encode_size, class_num, base_depth);
-        self.prior = tfp.distributions.Independent(tfp.distributions.Normal(loc = tf.zeros(encode_size), scale = 1));
     
     def call(self, inputs, labels, weight = 1.0):
         
         code_distr = self.encoder(inputs, labels);
-        kl_loss = tfp.layers.KLDivergenceRegularizer(self.prior, weight = 1.0)(code_distr);
         code = code_distr.sample();
         sample_distr = self.decoder(code, labels);
         likelihood_loss = -sample_distr.log_prob(inputs);
 
-        return kl_loss + likelihood_loss;
+        return likelihood_loss;
     
     def sample(self, labels, batch_size = 1):
         
