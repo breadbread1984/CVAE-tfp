@@ -4,7 +4,7 @@ simple conditional variational autoencoder (CVAE) implemented with TFP
 
 ## Introduction
 
-conditional variational autoencoder (CVAE) is a generator which can generate certain class of samples according to given class label. the implement of this CVAE adopts conditional instance normalization as a measure to provide condition information. the simplicity of the code attributes to the powerful utilities provided by tensorflow 2.0 and tensorflow probability library.
+conditional variational autoencoder (CVAE) is a generative model which can generate certain class of samples according to given class label. the implement of this CVAE adopts conditional instance normalization as a measure to provide condition information. the simplicity of the code attributes to the powerful utilities provided by tensorflow 2.0 and tensorflow probability library.
 
 ## how to create mnist dataset
 
