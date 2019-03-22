@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import cv2;
 import tensorflow as tf;
 import tensorflow_probability as tfp;
 from ConditionalInstanceNormalization import ConditionalInstanceNormalization;
@@ -145,4 +146,12 @@ class CVAE(tf.keras.Model):
 
 if __name__ == "__main__":
     
+    optimizer = tf.keras.optimizers.Adam(1e-4);
     cvae = CVAE();
+    checkpoint = tf.train.Checkpoint(model = cvae, optimizer = optimizer, optimizer_step = optimizer.iterations);
+    checkpoint.restore(tf.train.latest_checkpoint('checkpoints'));
+    for i in range(10):
+        img = cvae.sample(labels = 0);
+        img = img[0,...].numpy() * 255.0;
+        cv2.imshow(str(i),img.astype('uint8'));
+    cv2.waitKey();
