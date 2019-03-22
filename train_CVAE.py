@@ -47,7 +47,7 @@ def main():
                 with log.as_default():
                     tf.summary.scalar('loss',avg_loss.result(), step = optimizer.iterations);
                     for i in range(10):
-                        tf.summary.image('sample',cvae.sample(labels = i), step = optimizer.iterations);
+                        tf.summary.image(str(i),cvae.sample(labels = i), step = optimizer.iterations);
                 print('Step #%d Loss: %.6f' % (optimizer.iterations, avg_loss.result()));
                 avg_loss.reset_states();
             grads = tape.gradient(loss, cvae.trainable_variables);
