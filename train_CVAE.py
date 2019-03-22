@@ -53,8 +53,7 @@ def main():
             grads = tape.gradient(loss, cvae.trainable_variables);
             optimizer.apply_gradients(zip(grads, cvae.variables));
         #save check point
-        if tf.equal(optimizer.iterations % 100, 0):
-            checkpoint.save(os.path.join('checkpoints','ckpt'));
+        checkpoint.save(os.path.join('checkpoints','ckpt'));
 
 if __name__ == "__main__":
     
