@@ -15,19 +15,14 @@ class Encoder(tf.keras.Model):
         
         self.normalize = tf.keras.layers.Lambda(lambda x: tf.cast(x,tf.float32) - 0.5);
         self.conv1 = tf.keras.layers.Conv2D(filters = base_depth, kernel_size = (5,5), strides = (1,1), padding = 'same');
-        self.bn1 = tf.keras.layers.BatchNormalization();
         self.relu1 = tf.keras.layers.LeakyReLU();
         self.conv2 = tf.keras.layers.Conv2D(filters = base_depth, kernel_size = (5,5), strides = (2,2), padding = 'same');
-        self.bn2 = tf.keras.layers.BatchNormalization();
         self.relu2 = tf.keras.layers.LeakyReLU();
         self.conv3 = tf.keras.layers.Conv2D(filters = 2 * base_depth, kernel_size = (5,5), strides = (1,1), padding = 'same');
-        self.bn3 = tf.keras.layers.BatchNormalization();
         self.relu3 = tf.keras.layers.LeakyReLU();
         self.conv4 = tf.keras.layers.Conv2D(filters = 2 * base_depth, kernel_size = (5,5), strides = (2,2), padding = 'same');
-        self.bn4 = tf.keras.layers.BatchNormalization();
         self.relu4 = tf.keras.layers.LeakyReLU();
         self.conv5 = tf.keras.layers.Conv2D(filters = 4 * base_depth, kernel_size = (7,7), strides = (1,1), padding = 'valid');
-        self.bn5 = tf.keras.layers.BatchNormalization();
         self.relu5 = tf.keras.layers.LeakyReLU();
         self.flatten = tf.keras.layers.Flatten();
         self.dense = tf.keras.layers.Dense(units = tfp.layers.MultivariateNormalTriL.params_size(encode_size));
@@ -37,19 +32,14 @@ class Encoder(tf.keras.Model):
         
         result = self.normalize(inputs);
         result = self.conv1(result);
-        result = self.bn1(result);
         result = self.relu1(result);
         result = self.conv2(result);
-        result = self.bn2(result);
         result = self.relu2(result);
         result = self.conv3(result);
-        result = self.bn3(result);
         result = self.relu3(result);
         result = self.conv4(result);
-        result = self.bn4(result);
         result = self.relu4(result);
         result = self.conv5(result);
-        result = self.bn5(result);
         result = self.relu5(result);
         result = self.flatten(result);
         result = self.dense(result);
@@ -65,22 +55,16 @@ class Decoder(tf.keras.Model):
         
         self.reshape = tf.keras.layers.Reshape([1, 1, encode_size]);
         self.conv1 = tf.keras.layers.Conv2DTranspose(filters = 2 * base_depth, kernel_size = (7,7), strides = (1,1), padding = 'valid');
-        self.bn1 = tf.keras.layers.BatchNormalization();
         self.relu1 = tf.keras.layers.LeakyReLU();
         self.conv2 = tf.keras.layers.Conv2DTranspose(filters = 2 * base_depth, kernel_size = (5,5), strides = (1,1), padding = 'same');
-        self.bn2 = tf.keras.layers.BatchNormalization();
         self.relu2 = tf.keras.layers.LeakyReLU();
         self.conv3 = tf.keras.layers.Conv2DTranspose(filters = 2 * base_depth, kernel_size = (5,5), strides = (2,2), padding = 'same');
-        self.bn3 = tf.keras.layers.BatchNormalization();
         self.relu3 = tf.keras.layers.LeakyReLU();
         self.conv4 = tf.keras.layers.Conv2DTranspose(filters = base_depth, kernel_size = (5,5), strides = (1,1), padding = 'same');
-        self.bn4 = tf.keras.layers.BatchNormalization();
         self.relu4 = tf.keras.layers.LeakyReLU();
         self.conv5 = tf.keras.layers.Conv2DTranspose(filters = base_depth, kernel_size = (5,5), strides = (2,2), padding = 'same');
-        self.bn5 = tf.keras.layers.BatchNormalization();
         self.relu5 = tf.keras.layers.LeakyReLU();
         self.conv6 = tf.keras.layers.Conv2DTranspose(filters = base_depth, kernel_size = (5,5), strides = (1,1), padding = 'same');
-        self.bn6 = tf.keras.layers.BatchNormalization();
         self.relu6 = tf.keras.layers.LeakyReLU();
         self.conv7 = tf.keras.layers.Conv2D(filters = 1, kernel_size = (5,5), strides = (1,1), padding = 'same');
         self.flatten = tf.keras.layers.Flatten();
@@ -90,22 +74,16 @@ class Decoder(tf.keras.Model):
         
         result = self.reshape(inputs);
         result = self.conv1(result);
-        result = self.bn1(result);
         result = self.relu1(result);
         result = self.conv2(result);
-        result = self.bn2(result);
         result = self.relu2(result);
         result = self.conv3(result);
-        result = self.bn3(result);
         result = self.relu3(result);
         result = self.conv4(result);
-        result = self.bn4(result);
         result = self.relu4(result);
         result = self.conv5(result);
-        result = self.bn5(result);
         result = self.relu5(result);
         result = self.conv6(result);
-        result = self.bn6(result);
         result = self.relu6(result);
         result = self.conv7(result);
         result = self.flatten(result);
