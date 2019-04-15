@@ -11,7 +11,6 @@ class Encoder(tf.keras.Model):
         # encode_size: latent variable dimension
         super(Encoder,self).__init__();
         
-        self.class_num = class_num;
         self.prior = tfp.distributions.Independent(tfp.distributions.Normal(loc = tf.zeros(encode_size), scale = 1), reinterpreted_batch_ndims = 1);
         
         self.normalize = tf.keras.layers.Lambda(lambda x: tf.cast(x,tf.float32) - 0.5);
@@ -63,8 +62,6 @@ class Decoder(tf.keras.Model):
     def __init__(self, input_shape = (28, 28, 1), encode_size = 16, base_depth = 32):
         
         super(Decoder,self).__init__();
-        
-        self.class_num = class_num;
         
         self.reshape = tf.keras.layers.Reshape([1, 1, encode_size]);
         self.conv1 = tf.keras.layers.Conv2DTranspose(filters = 2 * base_depth, kernel_size = (7,7), strides = (1,1), padding = 'valid');
@@ -122,7 +119,6 @@ class VAE(tf.keras.Model):
         
         super(VAE, self).__init__();
         
-        self.class_num = class_num;
         self.prior = tfp.distributions.Independent(tfp.distributions.Normal(loc = tf.zeros(encode_size), scale = 1));
         
         self.encoder = Encoder(encode_size, base_depth);
