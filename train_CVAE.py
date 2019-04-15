@@ -7,18 +7,10 @@ from CVAE import CVAE;
 
 batch_size = 100;
 
-def parse_function(serialized_example):
-    feature = tf.io.parse_single_example(
-        serialized_example,
-        features = {
-            'data':tf.io.FixedLenFeature((),dtype = tf.string,default_value = ''),
-            'label':tf.io.FixedLenFeature((),dtype = tf.int64,default_value = 0)
-        }
-    );
-    data = tf.io.decode_raw(feature['data'],out_type = tf.uint8);
-    data = tf.reshape(data,[28,28,1]);
+def parse_function(feature):
+    data = feature["image"];
     data = tf.cast(data,dtype = tf.float32);
-    label = tf.cast(feature['label'],dtype = tf.int32);
+    label = feature["label"];
     return data,label;
 
 def main():
@@ -26,8 +18,10 @@ def main():
     cvae = CVAE(class_num = 10);
     optimizer = tf.keras.optimizers.Adam(1e-3);
     #load dataset
-    trainset = tf.data.TFRecordDataset(os.path.join('dataset','trainset.tfrecord')).map(parse_function).shuffle(batch_size).batch(batch_size);
-    testset = tf.data.TFRecordDataset(os.path.join('dataset','testset.tfrecord')).map(parse_function).batch(batch_size);
+    trainset = tfds.load(name = "mnist", split = tfds.Split.TRAIN, download = False);
+    trainset = trainset.map(parse_function).shuffle(batch_size).batch(batch_size);
+    testset = tfds.load(name = "mnist", split = tfds.Split.TRAIN, download = False);
+    testset = testset.map(parse_function).shuffle(batch_size).batch(batch_size);
     #restore from existing checkpoint
     if False == os.path.exists('cvae_checkpoints'): os.mkdir('cvae_checkpoints');
     checkpoint = tf.train.Checkpoint(model = cvae, optimizer = optimizer, optimizer_step = optimizer.iterations);
