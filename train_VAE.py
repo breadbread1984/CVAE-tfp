@@ -51,7 +51,7 @@ def main():
                 print('Step #%d Loss: %.6f' % (optimizer.iterations, avg_loss.result()));
                 avg_loss.reset_states();
             grads = tape.gradient(loss, vae.trainable_variables);
-            optimizer.apply_gradients(zip(grads, vae.variables));
+            optimizer.apply_gradients(zip(grads, vae.trainable_variables));
         #save check point
         checkpoint.save(os.path.join('vae_checkpoints','ckpt'));
 
