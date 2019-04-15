@@ -132,8 +132,7 @@ class CVAE(tf.keras.Model):
     def call(self, inputs, labels, weight = 1.0):
         
         code_distr = self.encoder(inputs, labels);
-        code = code_distr.sample();
-        sample_distr = self.decoder(code, labels);
+        sample_distr = self.decoder(code_distr, labels);
         likelihood_loss = -sample_distr.log_prob(inputs);
 
         return likelihood_loss;

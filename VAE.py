@@ -127,8 +127,7 @@ class VAE(tf.keras.Model):
     def call(self, inputs, weight = 1.0):
         
         code_distr = self.encoder(inputs);
-        code = code_distr.sample();
-        sample_distr = self.decoder(code);
+        sample_distr = self.decoder(code_distr);
         likelihood_loss = -sample_distr.log_prob(inputs);
 
         return likelihood_loss;

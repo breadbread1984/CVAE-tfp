@@ -24,7 +24,7 @@ def parse_function(serialized_example):
 def main():
     
     vae = VAE();
-    optimizer = tf.keras.optimizers.Adam(1e-4);
+    optimizer = tf.keras.optimizers.Adam(1e-3);
     #load dataset
     trainset = tf.data.TFRecordDataset(os.path.join('dataset','trainset.tfrecord')).map(parse_function).shuffle(batch_size).batch(batch_size);
     testset = tf.data.TFRecordDataset(os.path.join('dataset','testset.tfrecord')).map(parse_function).batch(batch_size);
