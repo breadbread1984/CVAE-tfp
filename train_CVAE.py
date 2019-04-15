@@ -10,6 +10,7 @@ batch_size = 100;
 def parse_function(feature):
     data = feature["image"];
     data = tf.cast(data,dtype = tf.float32) / 255.;
+    data = tf.random.uniform(tf.shape(data)) > data; # data augmentation
     label = feature["label"];
     return data,label;
 
