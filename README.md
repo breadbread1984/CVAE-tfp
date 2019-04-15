@@ -16,7 +16,13 @@ python3 create_dataset.py
 
 ## how to train
 
-launch the training by executing
+launch the VAE training by executing
+
+```Base
+python3 train_VAE.py
+```
+
+launch the CVAE training by executing
 
 ```Bash
 python3 train_CVAE.py
@@ -25,14 +31,20 @@ python3 train_CVAE.py
 you can supervise the training by tensorboard with the command
 
 ```Bash
-tensorboard --logdir checkpoints
+tensorboard --logdir (vae|cvae)_checkpoints
 ```
 
 the changing of loss and the evolving of the generated hand writing figure images are shown on tensorboard.
 
 ## how to test
 
-sample hand writing figure images by executing
+sample hand writing figure images from VAE by executing
+
+```Bash
+python3 VAE.py
+```
+
+sample hand writing figure images from CVAE by executing
 
 ```Bash
 python3 CVAE.py
