@@ -11,14 +11,13 @@ batch_size = 100;
 def parse_function(feature):
     data = feature["image"];
     data = tf.cast(data,dtype = tf.float32) / 255.;
-    data = tf.random.uniform(tf.shape(data)) > data; # data augmentation
     label = feature["label"];
     return data,label;
 
 def main():
     
     cvae = CVAE(class_num = 10);
-    optimizer = tf.keras.optimizers.Adam(1e-3);
+    optimizer = tf.keras.optimizers.Adam(1e-4);
     #load dataset
     trainset = tfds.load(name = "mnist", split = tfds.Split.TRAIN, download = False);
     trainset = trainset.map(parse_function).shuffle(batch_size).batch(batch_size);
