@@ -150,7 +150,7 @@ if __name__ == "__main__":
     checkpoint = tf.train.Checkpoint(model = cvae, optimizer = optimizer, optimizer_step = optimizer.iterations);
     checkpoint.restore(tf.train.latest_checkpoint('cvae_checkpoints'));
     for i in range(10):
-        img = cvae.sample(labels = 0);
+        img = cvae.sample(labels = i);
         img = img[0,...].numpy() * 255.0;
         cv2.imshow(str(i),img.astype('uint8'));
     cv2.waitKey();
