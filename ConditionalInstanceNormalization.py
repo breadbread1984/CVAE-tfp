@@ -12,7 +12,8 @@ class ConditionalInstanceNormalization(tf.keras.layers.Layer):
         self.num_categories = num_categories;
 
     def build(self, input_shape):
-        
+       
+        # shape = (class_num, channels)
         shape = tf.TensorShape([self.num_categories]).concatenate(input_shape[-1:]);
         self.gamma = self.add_weight(name = 'gamma', shape = shape, initializer = tf.ones_initializer(), trainable = True);
         self.beta = self.add_weight(name = 'beta', shape = shape, initializer = tf.zeros_initializer(), trainable = True);
@@ -24,19 +25,16 @@ class ConditionalInstanceNormalization(tf.keras.layers.Layer):
         if inputs_rank != 4:
             raise ValueError('Input %s is not a 4D tensor.' % inputs.name);
         mean, variance = tf.nn.moments(inputs, axes = (1,2), keepdims = True);
-        gamma = tf.gather(self.gamma, labels);
-        beta = tf.gather(self.beta, labels);
-        # add batch dim when batch size equals 1
-        if gamma.shape.ndims == 1: gamma = tf.expand_dims(gamma,0);
-        if beta.shape.ndims == 1: beta = tf.expand_dims(beta,0);
-        # add two dims to match the batch normal's requirements
+        # gamme.shape = (batch, channels)
+        gamma = tf.gather_nd(self.gamma, labels);
+        # beta.shape = (batch, channels)
+        beta = tf.gather_nd(self.beta, labels);
+        # gamma.shape = (batch, 1, 1, channels) for broadcasting on h and w
         gamma = tf.expand_dims(tf.expand_dims(gamma,1),1);
+        # beta.shape = (batch, 1, 1, channels) for broadcasting on h and w
         beta = tf.expand_dims(tf.expand_dims(beta,1),1);
         variance_epsilon = 1e-5;
         outputs = tf.nn.batch_normalization(inputs,mean,variance,beta,gamma,variance_epsilon);
-        print(inputs.shape)
-        print(labels.shape)
-        print(outputs.shape)
         outputs.set_shape(inputs.get_shape());
         return outputs;
     
