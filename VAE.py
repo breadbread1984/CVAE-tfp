@@ -77,16 +77,16 @@ class VAE(tf.keras.Model):
         
         code = self.prior.sample(sample_shape = (batch_size,));
         sample = self.decoder(code);
-        return sample.sample();
+        retval = tf.clip_by_value(sample.sample(),0,1) * 255.;
+        retval = tf.cast(retval, dtype = tf.uint8);
+        return retval;
 
 if __name__ == "__main__":
     
-    optimizer = tf.keras.optimizers.Adam(1e-4);
     vae = VAE();
     vae.load_weights('vae.h5');
     for i in range(10):
-        img = vae.sample();
-        img = img[0,...].numpy() * 255.0;
-        cv2.imshow(str(i),img.astype('uint8'));
+        img = vae.sample()[0,...];
+        cv2.imshow(str(i),img.numpy());
     cv2.waitKey();
 
