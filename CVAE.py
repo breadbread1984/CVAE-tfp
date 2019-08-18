@@ -91,7 +91,8 @@ if __name__ == "__main__":
     cvae = CVAE();
     cvae.load_weights('cvae.h5');
     for i in range(10):
-        img = cvae.sample(i)[0,...];
+        cls = tf.expand_dims(tf.constant([i], dtype = tf.int64), 0);
+        img = cvae.sample(cls)[0,...];
         cv2.imshow(str(i),img.numpy());
     cv2.waitKey();
 
