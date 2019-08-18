@@ -34,6 +34,9 @@ class ConditionalInstanceNormalization(tf.keras.layers.Layer):
         beta = tf.expand_dims(tf.expand_dims(beta,1),1);
         variance_epsilon = 1e-5;
         outputs = tf.nn.batch_normalization(inputs,mean,variance,beta,gamma,variance_epsilon);
+        print(inputs.shape)
+        print(labels.shape)
+        print(outputs.shape)
         outputs.set_shape(inputs.get_shape());
         return outputs;
     
